@@ -28,7 +28,7 @@ app.get("/api/timestamp/", (req, res) => {
   res.json({ unix: Date.now(), utc: Date() });
 });
 
-app.get("/api/timestamp/:date_string?", function(req, res, next){
+app.get("/api/timestamp/:date_string?", function(req, res){
   let input = req.params.date_string ;
   
    if (/\d{5,}/.test(input)) {
@@ -37,26 +37,13 @@ app.get("/api/timestamp/:date_string?", function(req, res, next){
     res.json({ unix: input, utc: new Date(dateInt).toUTCString() });
   }
 
-  let options = {
-    "year" : "numeric",
-    "month": "long",
-    "day" : "numeric"
-   
-  }
-  
+ 
   
   let date = new Date(input);
-  let time = new Date()
-  let time2String = time.toUTCString();
-  let unixTS = time.valueOf()
-  let timeToUTC = time.toLocaleDateString('en-us', options)
+  
+    
   let dateToString = date.toString();
-  let dateToUTC = date.toLocaleDateString('en-us', options)
-  let unixTime = date.getTime();
   
-  
-  
-   
     
   if (dateToString === "Invalid Date"){
     
@@ -64,11 +51,11 @@ app.get("/api/timestamp/:date_string?", function(req, res, next){
   }
   
   else{
-    res.json({"unix" : unixTime , "UTC" : dateToUTC})
+    res.json({ unix: date.valueOf(), utc: date.toUTCString() });
   }
   
   
-  next();
+  
   
 });
 
