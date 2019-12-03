@@ -24,30 +24,45 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api/timestamp/", (req, res) => {
+  res.json({ unix: Date.now(), utc: Date() });
+});
+
 app.get("/api/timestamp/:date_string?", function(req, res, next){
+  let input = req.params.date_string ;
   
+   if (/\d{5,}/.test(input)) {
+    let dateInt = parseInt(input);
+    //Date regards numbers as unix timestamps, strings are processed differently
+    res.json({ unix: input, utc: new Date(dateInt).toUTCString() });
+  }
+
   let options = {
     "year" : "numeric",
     "month": "long",
     "day" : "numeric"
+   
   }
-  let input = req.params.date_string ;
+  
+  
   let date = new Date(input);
   let time = new Date()
-  let timeToUTC = time.toLocaleDateString("en-us", options)
+  let time2String = time.toUTCString();
+  let unixTS = time.valueOf()
+  let timeToUTC = time.toLocaleDateString('en-us', options)
   let dateToString = date.toString();
-  let dateToUTC = date.toUTCString();
-  let unixTime = date.getTime()*1000;
+  let dateToUTC = date.toLocaleDateString('en-us', options)
+  let unixTime = date.getTime();
   
   
-    if(!input)  {
-     res.json({"unix": time, "UTC": timeToUTC}) 
-    }
+  
+   
     
-  else if (dateToString === "Invalid Date"){
+  if (dateToString === "Invalid Date"){
     
     res.json({"error" : "Invalid Date" })
   }
+  
   else{
     res.json({"unix" : unixTime , "UTC" : dateToUTC})
   }
